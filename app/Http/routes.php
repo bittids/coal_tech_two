@@ -14,3 +14,5 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/ct_form', 'CTController@index');
+Route::post('/ct_form', 'CTController@post_form');
