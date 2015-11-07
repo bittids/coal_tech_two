@@ -14,11 +14,23 @@ class CTController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+   	public function index()
     {
-        //
+        return view('ct_form');
     }
 
+    
+    public function post_form(Request $request)
+    {
+    	$arr_info = $request->all();
+//    	print_r($arr_info);
+    	$json_info = json_encode($arr_info);
+//    	$fs = new Filesystem(); 	
+//    	$fs->put("ct_data.json", $json_info);
+		file_put_contents('ct_data', $json_info);
+  //  	return view('ct_form');
+    }
+  
     /**
      * Show the form for creating a new resource.
      *

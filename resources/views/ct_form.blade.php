@@ -46,6 +46,53 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
 <!-- jquery CDN -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script>
+$(document).ready(function(){
+
+	
+	$("#update_btn").click(function(){
+
+ //       var user_id = $("#user_id").val();
+
+		propagate_csrf_code();
+        jQuery.ajax({
+            url: "/ajax/get_user_info_admin",
+            type: "POST",
+            data: {   
+                "user_id":user_id,
+            },
+            dataType : "json",
+            beforeSend: function () {
+            },               
+            success: function( data ) {
+             	$("#first_name").val(data.first_name);
+             	$("#last_name").val(data.last_name);
+             	$("#email").val(data.email);
+			},
+            error: function( xhr, status, errorThrown ) {
+                console.log("Ajax error");
+            }
+        });  // end jquery ajax
+    }); // end on dropdown change
+
+
+    function propagate_csrf_code()
+    {
+        var csrf_token = $("input[name=_token]").val();
+
+// laravel imposes csrf protection - the ajax setup 
+// sends the csrf token in the header to remove the 
+// 500 internal service error 
+		$.ajaxSetup({
+			headers: {
+				'X-CSRF-TOKEN': csrf_token
+			}
+		});
+    }     // end function propagate_csrf_code  
+});
+</script>
+
 </head>
     <body>
 <div class="container">
@@ -106,7 +153,7 @@ Coalition Tech form
 <div class="col-sm-1"> <br><br><br></div>
 
 <div class="col-sm-8">
- <input type="submit" value="submit form">
+ <input type="button" id="update_btm" value="update info">
    
 </div>
     <div class="col-sm-2"> </div>
