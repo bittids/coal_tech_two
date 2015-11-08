@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Storage;
 
 class CTController extends Controller
 {
@@ -22,13 +23,53 @@ class CTController extends Controller
     
     public function post_form(Request $request)
     {
-    	$arr_info = $request->all();
-//    	print_r($arr_info);
-    	$json_info = json_encode($arr_info);
-//    	$fs = new Filesystem(); 	
-//    	$fs->put("ct_data.json", $json_info);
-		file_put_contents('ct_data', $json_info);
-  //  	return view('ct_form');
+    	$arr_new_info = array(
+    			"product_name" => $request->product_name,
+				"quantity" => $request->quantity,
+    			"prince" => $request->price,
+    			"curr_time" => time()
+    	);
+/*    	$arr_new_info = array(
+    			"product_name" => "asdf",
+    			"quantity" => 5,
+    			"price" => 7,
+    			"curr_time" => time()
+    	);
+*/
+// echo "new info =";   	 
+//    	print_r($arr_new_info);
+// echo "<br>";   	
+ //   	$json_info = json_encode($arr_new_info);
+		$bool_file_exists = Storage::exists('coal_tech.txt');
+		if ($bool_file_exists)
+		{
+//			echo "file exists<br>";
+			$str_contents = Storage::get('coal_tech.txt');
+			$obj_info = json_decode($str_contents);
+			$arr_info = array();
+			foreach($obj_info as $key=>$obj_item)
+			{
+				$arr_info[$key] = (array)$obj_item;
+			} 
+//			echo "info from disk = ";
+//			print_r($arr_info);
+//			echo "<br>";
+			$arr_info[] = $arr_new_info;
+			$json_info = json_encode($arr_info);
+//			echo "info from disk and new info = ";
+//			echo $json_info;
+//			echo "<br><br>";
+			Storage::put('coal_tech.txt', $json_info);				
+			return $arr_info;
+		}
+		else 
+		{
+//			echo "file does not exist\n<br>";
+			$json_info = json_encode(array(0 => $arr_new_info));
+//			print_r($json_info);
+			Storage::put('coal_tech.txt', $json_info);				
+			return $json_info;
+		}
     }
   
     /**
