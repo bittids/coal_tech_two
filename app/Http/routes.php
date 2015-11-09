@@ -14,4 +14,5 @@ Route::get('/', function () {
 });
 Route::get('/ct_form', 'CTController@index');
 Route::post('/ct_form', 'CTController@post_form');
+Route::post('/ct_reset', 'CTController@post_reset');
 Route::get('/ct_formx', 'CTController@post_formx');

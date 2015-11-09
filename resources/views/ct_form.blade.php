@@ -19,18 +19,43 @@
 
 <script>
 $(document).ready(function(){
-//	console.log("4 reached");
+	$("#reset_btn").click(function(){
+        
+		propagate_csrf_code();
+   		jQuery.ajax({
+            url: "/ct_reset",
+            type: "POST",
+            data: {   
+//                "product_name":product_name,
+ //               "quantity":quantity,
+ //               "price":price
+			},
+            dataType : "json",
+            beforeSend: function () {
+            },               
+            success: function( data ) {
+                $('#results').html("");
+            	$('#total').html("");
+                // end headings row
+//                console.log("file deleted");
 
+            },
+            error: function( xhr, status, errorThrown ) {
+                console.log("Ajax error");
+            }
+        });  // end jquery ajax
+		
+    }); // end on dropdown change
+	
 	
 	$("#update_btn").click(function(){
-//console.log("1 reached");
         var product_name = $("#product_name").val();
         var quantity = $("#quantity").val();
         var price = $("#price").val();
         var results;
+        var total = 0;
                
 		propagate_csrf_code();
-//		console.log("2 reached");
    		jQuery.ajax({
             url: "/ct_form",
             type: "POST",
@@ -43,49 +68,77 @@ $(document).ready(function(){
             beforeSend: function () {
             },               
             success: function( data ) {
-                console.log(data);
-                $('#results').html(start_row());
-                $('#results').append(start_column(3));
-                $('#results').append("Product");
-                $('#results').append(end_div());
-                $('#results').append(start_column(3));
-                $('#results').append("Quantity");
-                $('#results').append(end_div());
-                $('#results').append(start_column(3));
-                $('#results').append("Price");
-                $('#results').append(end_div());
-                $('#results').append(start_column(3));
-                $('#results').append("Date/time");
-                $('#results').append(end_div());
-                $('#results').append(end_div());
+				results = start_row();
+				results = results + start_column(1);             
+                results = results + "";
+                results = results + end_div();
+				results = results + start_column(2);             
+                results = results + "Product";
+                results = results + end_div();
+				results = results + start_column(1);
+                results = results + "Quantity";
+                results = results + end_div();
+				results = results + start_column(1);
+                results = results + "Price";
+                results = results + end_div();
+				results = results + start_column(3);
+                results = results + "Date";
+                results = results + end_div();
+				results = results + start_column(4);
+                results = results + "Time";
+                results = results + end_div();
+                results = results + end_div(); // end row
                 // end headings row
-                console.log($('#results').html());
                 
                 $.each( data, function( key, value ) {
- //               	  console.log( value.product_name );
-                      $('#results').append(start_column(3));
-                      $('#results').append(value.product_name);
-                      $('#results').append(end_div());
-                      $('#results').append(start_column(3));
-                      $('#results').append(value.quantity);
-                      $('#results').append(end_div());
-                      $('#results').append(start_column(3));
-                      $('#results').append(value.price);
-                      $('#results').append(end_div());
-                      $('#results').append(start_column(3));
-                      $('#results').append(value.curr_time);
-                      $('#results').append(end_div());
-                      $('#results').append(end_div());
-				});  // end .each loop
-//             	$("#first_name").val(data.first_name);
-//             	$("#last_name").val(data.last_name);
-//             	$("#email").val(data.email);
-			},
+    				results = results + start_row();
+    				results = results + start_column(1);             
+                    results = results + "Item";
+                    results = results + end_div();
+    				results = results + start_column(2);             
+                    results = results + value.product_name;
+                    results = results + end_div();
+    				results = results + start_column(1);
+                    results = results + value.quantity;
+                    results = results + end_div();
+    				results = results + start_column(1);
+                    results = results + value.price;
+                    results = results + end_div();
+    				results = results + start_column(3);
+                    results = results + value.date_formatted;
+                    results = results + end_div();
+    				results = results + start_column(4);
+                    results = results + value.time_formatted;
+                    results = results + end_div();
+                    results = results + end_div(); // end row
+					total = total + (parseInt(value.quantity) * parseInt(value.price));
+					console.log("total = " + total);
+                });  // end .each loop
+            	$('#results').html(results);
+				results = start_row();
+				results = results + start_column(4);             
+                results = results + "";
+                results = results + end_div();
+				results = results + start_column(2);             
+                results = results + "Total equals ";
+                results = results + end_div();
+				results = results + start_column(6);             
+                results = results + "$" + total + ".00";
+                results = results + end_div();
+                results = results + end_div(); // end row
+            	$('#total').html(results);
+                
+//              	console.log($('#results').html());
+              
+             	$("#product_name").val("");
+             	$("#quantity").val("");
+             	$("#price").val("");
+
+            },
             error: function( xhr, status, errorThrown ) {
                 console.log("Ajax error");
             }
         });  // end jquery ajax
-//   		console.log("3 reached");
         
     }); // end on dropdown change
 
@@ -103,7 +156,6 @@ $(document).ready(function(){
 			}
 		});
     }     // end function propagate_csrf_code  
-});
 
 function start_row()
 {
@@ -115,10 +167,13 @@ function start_column(width)
 	return '<div class="col-sm-' + width + '">';
 }
 
+
 function end_div()
 {
+//	console.log("function end_div invoked");
 	return "</div>";
 }
+}); // end on doc ready
 
 
 </script>
@@ -126,10 +181,21 @@ function end_div()
 </head>
     <body>
 <div class="container">
+
 <div class="row">
-<div class="col-sm-3"><br> </div>
+<div class="col-sm-3"><br><br><br> </div>
 <div class="col-sm-6"> 
-Coalition Tech form
+<br>
+    </div>
+<div class="col-sm-3"> </div>
+</div><!-- end row -->
+
+
+
+<div class="row">
+<div class="col-sm-3"><br><br> </div>
+<div class="col-sm-6"> 
+CT form - Doug Bittinger
     </div>
 <div class="col-sm-3"> </div>
 </div><!-- end row -->
@@ -138,11 +204,11 @@ Coalition Tech form
    {!! csrf_field() !!}
      
 <div class="row">
-<div class="col-sm-1"> <br><br><br></div>
-<div class="col-sm-3"> 
+<div class="col-sm-1"> <br><br></div>
+<div class="col-sm-4"> 
    Product name            
     </div>
-<div class="col-sm-5">
+<div class="col-sm-4">
  <input type="text" name="product_name" id="product_name" value="">
    
 </div>
@@ -152,11 +218,11 @@ Coalition Tech form
   
        
 <div class="row">
-<div class="col-sm-1"> <br><br><br></div>
-<div class="col-sm-3"> 
+<div class="col-sm-1"> <br><br></div>
+<div class="col-sm-4"> 
    Quantity in stock           
     </div>
-<div class="col-sm-5">
+<div class="col-sm-4">
  <input type="text" name="quantity" id="quantity" value="">
    
 </div>
@@ -167,10 +233,10 @@ Coalition Tech form
        
 <div class="row">
 <div class="col-sm-1"> <br><br><br></div>
-<div class="col-sm-3"> 
-   Price per item            
+<div class="col-sm-4"> 
+   Price per item - please enter as integer, no dollar sign, no decimal, no cents value          
     </div>
-<div class="col-sm-5">
+<div class="col-sm-4">
  <input type="text" name="price" id="price" value="">
    
 </div>
@@ -180,19 +246,26 @@ Coalition Tech form
   
        
 <div class="row">
-<div class="col-sm-1"> <br><br><br></div>
+<div class="col-sm-1"> <br></div>
 
-<div class="col-sm-8">
+<div class="col-sm-5">
  <input type="button" id="update_btn" value="update info">
    
 </div>
-    <div class="col-sm-2"> </div>
+    <div class="col-sm-5"> <input type="button" id="reset_btn" value="reset">
+     </div>
 <div class="col-sm-1"> </div>
 </div><!-- end row -->
   
   
 </form>
-<div id="results"></div>
+<div id="results_div">
+<span id="results"></span>
 </div>
+<br>
+<div id="total_div">
+<span id="total"></span>
+</div>
+</div><!-- end container -->
     </body>
 </html>
